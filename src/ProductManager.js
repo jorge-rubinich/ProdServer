@@ -1,17 +1,17 @@
 const fs = require('fs')
 
 class ProductManager {
-    constructor() {
+    constructor(path) {
         this.products = []
         this.productCount = 0
-        this.path = "./files/productos.json"
-        this.readFile()
+        this.path = path
     }
 
-    readFile(){
+    //
+    getProducts = async (limite)=>{
         try {
             if (fs.existsSync(this.path)) {
-                const fileContent = fs.readFileSync(this.path, 'utf-8')
+                const fileContent = await fs.promises.readFile(this.path, 'utf-8')
                 const data = JSON.parse(fileContent)
                 this.products= data.productsList
                 this.productCount = data.index
@@ -19,21 +19,24 @@ class ProductManager {
         } catch (error) {
             console.log(error)
         }
+        if (limite==0) { limite= this.products.length}
+         return this.products.slice(0,limite)
     }
     
-    writeFile(){
+    writeFile = async ()=>{
         const data= { index : this.productCount, productsList : this.products }
         try {
-            fs.writeFileSync(this.path, JSON.stringify(data),'utf-8')
+            await fs.writeFile(this.path, JSON.stringify(data),'utf-8')
         } catch (error) {
             console.log(error)
         }
     }
 
 
-    addProduct(prodToAdd) {
+    addProduct= async (prodToAdd) =>{
     
         if (this.validProduct(prodToAdd)) {
+            product= await this.getProducts()
             this.productCount+=1;
             let newProduct = prodToAdd
             newProduct.id =  this.productCount
@@ -41,7 +44,7 @@ class ProductManager {
             this.products.push(newProduct)
             // console.log(this.products)
             console.log("El codigo ",newProduct.code," fue agregado exitosamente.");
-            this.writeFile()
+           await  this.writeFile()
 
         }
     }
@@ -105,12 +108,10 @@ class ProductManager {
         return returnValue
     }
 
-    getProductById(id) {
+    async getProductById(id) {
         // Retorna el producto buscado o undefined.
-        const searchedCode = this.products.find(prod => prod.id ==id)
-        if (searchedCode===undefined) {
-            return "id "+id+" Not Found"
-        }
+        const products = await this.getProducts()
+        const searchedCode = products.find(prod => prod.id ==id)
         return searchedCode
     }
 
@@ -129,11 +130,6 @@ class ProductManager {
         }
     }
 
-    getProducts() {
-        // Devuelve el arreglo completo de productos
-        return this.products
-    }
-
     listProducts(){
         this.products.forEach((product) => {
             console.log(`${product.title} ... $${product.price}`);
@@ -143,7 +139,9 @@ class ProductManager {
 }
 
 
-const obj={ title: "producto prueba",
+module.exports = ProductManager
+
+/* const obj={ title: "producto prueba",
 description : "Este es un producto prueba",
 price: 200,
 thumbnail : "Sin imagen",
@@ -153,11 +151,11 @@ stock: 25 }
 const obj2={ 
     id:20,
     price: 700,
-    stock: 70 }
+    stock: 70 } */
 
 // ****  TESTING ******************
-const pm = new ProductManager
-pm.getProducts()
+/*const pm = new ProductManager
+console.log(pm.getProducts())
 pm.addProduct(obj)
 pm.getProducts()
 pm.updateProduct(1,obj2)
@@ -165,3 +163,4 @@ console.log(pm.getProductById(20))
 console.log(pm.getProductById(1))
 pm.deleteProductById(1)
 pm.listProducts()
+ */
