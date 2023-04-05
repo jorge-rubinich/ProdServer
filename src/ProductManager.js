@@ -26,7 +26,7 @@ class ProductManager {
     writeFile = async ()=>{
         const data= { index : this.productCount, productsList : this.products }
         try {
-            await fs.writeFile(this.path, JSON.stringify(data),'utf-8')
+            await fs.promises.writeFile(this.path, JSON.stringify(data),'utf-8')
         } catch (error) {
             console.log(error)
         }
@@ -34,19 +34,19 @@ class ProductManager {
 
 
     addProduct= async (prodToAdd) =>{
-    
-        if (this.validProduct(prodToAdd)) {
-            product= await this.getProducts()
+        const valid=this.validProduct(prodToAdd)
+        if (valid=="ok") {
+            await this.getProducts()
             this.productCount+=1;
             let newProduct = prodToAdd
             newProduct.id =  this.productCount
             // agregar el producto
             this.products.push(newProduct)
             // console.log(this.products)
-            console.log("El codigo ",newProduct.code," fue agregado exitosamente.");
-           await  this.writeFile()
-
+            await  this.writeFile()
+            return "ok"
         }
+        return valid
     }
 
     updateProduct(id, updatedProduct){
@@ -63,6 +63,7 @@ class ProductManager {
     }
     
     validProduct(prodToVerify) {
+        console.log(prodToVerify)
         let returnValue= true
         let logMessage= "Se han encontrado los siguientes errores: \n"
         
@@ -104,8 +105,8 @@ class ProductManager {
             logMessage+= "- No ha especificado el stock del producto.\n"
             returnValue=false
         }
-        returnValue || console.log(logMessage)
-        return returnValue
+        if (returnValue) {return "ok"}
+        return logMessage
     }
 
     async getProductById(id) {

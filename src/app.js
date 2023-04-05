@@ -8,6 +8,7 @@ const pm = new ProductManager(path)
 const app= express()
 // si vamos a usar query (url con ?) hay que agregar la prox linea
 // y se reciben en req.query
+app.use(express.json())  //para que pueda recibir Jsons en la peticion..OJO!!!!
 app.use(express.urlencoded({extended: true}))
 
 app.get('/api/products', async (req,res)=>{
@@ -27,7 +28,7 @@ app.get('/api/products', async (req,res)=>{
 app.get('/api/products/:pid', async (req, res)=>{
     product=await pm.getProductById(req.params.pid)
     if (product===undefined) {
-       res.status(500).send({
+       res.status(404).send({
         status: "ERROR",
         error: 'No existe producto con id '+req.params.pid+'.'
        })
@@ -36,6 +37,13 @@ app.get('/api/products/:pid', async (req, res)=>{
 }
 }) 
 
+app.post('/api/products', async (req, res)=>{
+    let newProduct= req.body
+    result= await pm.addProduct(newProduct)
+    if (result=="ok") {res.status(200).send({status: 'SUCCESS', data: "ok"})}
+    
+    res.status(404).send({ status: "ERROR", error: result  })
+}) 
 
 const PORT = 5000
 
