@@ -81,9 +81,7 @@ class ProductManager {
         // Evaluo si el codigo existe.
         console.log(prodToVerify.code)
         const codeExist= this.products.find(prod => prod.code ==prodToVerify.code);
-        console.log(codeExist)
-        console.log("xxx")
-        if (!(codeExist===undefined)) {
+        if (!(!codeExist)) {
            // retornar error El codigo existe
            errores.push("- El codigo "+prodToVerify.code+" ya existe.")
            returnValue=false
@@ -110,12 +108,12 @@ class ProductManager {
             returnValue=false
         }
         // evaluo si price es undefined  
-        if (prodToVerify.price===undefined) {
+        if (!prodToVerify.price) {
             errores.push("- No ha especificado el precio (price) del producto")
             returnValue=false
         }
         // evaluo si stock esta vacio
-        if (prodToVerify.stock===undefined) {
+        if (!prodToVerify.stock) {
             errores.push("- No ha especificado el stock del producto")
             returnValue=false
         }
@@ -150,27 +148,3 @@ class ProductManager {
 
 
 module.exports = ProductManager
-
-/* const obj={ title: "producto prueba",
-description : "Este es un producto prueba",
-price: 200,
-thumbnail : "Sin imagen",
-code: "abc123",
-stock: 25 }
-
-const obj2={ 
-    id:20,
-    price: 700,
-    stock: 70 } */
-
-// ****  TESTING ******************
-/*const pm = new ProductManager
-console.log(pm.getProducts())
-pm.addProduct(obj)
-pm.getProducts()
-pm.updateProduct(1,obj2)
-console.log(pm.getProductById(20))
-console.log(pm.getProductById(1))
-pm.deleteProductById(1)
-pm.listProducts()
- */
