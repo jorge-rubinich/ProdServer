@@ -12,37 +12,37 @@ app.use(express.json())  //para que pueda recibir Jsons en la peticion..OJO!!!!
 app.use(express.urlencoded({extended: true}))
 
 app.get('/api/products', async (req,res)=>{
-    try {
-        let {limite } = req.query
-        if (!limite ) {limite =0}
-        const products=await pm.getProducts(limite)
-        res.status(200).send({status: 'SUCCESS', data: products})
-    } catch (error) {
-        res.status(500).send({
-            status: "ERROR",
-            error: 'Se ha producido un error accediendo a la base de productos '+error
-        })
-    }
+    let {limite } = req.query
+    if (!limite ) {limite =0}
+    const result=await pm.getProducts(limite)
+    return res.status(result.status=="ok"?200:404).send(result)
 })
 
 app.get('/api/products/:pid', async (req, res)=>{
-    product=await pm.getProductById(req.params.pid)
-    if (product===undefined) {
-       res.status(404).send({
-        status: "ERROR",
-        error: 'No existe producto con id '+req.params.pid+'.'
-       })
-    } else {
-    res.status(200).send({status: 'SUCCESS', data: product})
-}
+    const result=await pm.getProductById(req.params.pid)
+    return res.status(result.status=="ok"?200:404).send(result)
 }) 
 
+// add a new product
 app.post('/api/products', async (req, res)=>{
     let newProduct= req.body
-    result= await pm.addProduct(newProduct)
-    if (result=="ok") {res.status(200).send({status: 'SUCCESS', data: "ok"})}
-    
-    res.status(404).send({ status: "ERROR", error: result  })
+    const result= await pm.addProduct(newProduct)
+    return res.status(result.status=="ok"?200:400).send(result)
+}) 
+
+// modify a product
+app.put('/api/products/:pid', async (req, res)=>{
+    let idToModify= req.params.pid
+    let updatedProduct = req.body
+    const result= await pm.updateProduct(idToModify, updatedProduct)
+    return res.status(result.status=="ok"?200:404).send(result)
+}) 
+
+// delete a product
+app.delete('/api/products/:pid', async (req, res)=>{
+    let idToDelete= req.params.pid
+    const result= await pm.deleteProductById(idToDelete)
+    return res.status(result.status=="ok"?200:404).send(result)
 }) 
 
 const PORT = 5000
@@ -54,5 +54,3 @@ app.listen(PORT, ()=>{
     console.log(`http://localhost:${PORT}/api/products/{id}                 retorna el producto con la id dada`)
     
 })
-
-

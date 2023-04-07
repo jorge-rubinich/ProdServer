@@ -8,7 +8,7 @@ class ProductManager {
     }
 
     //
-    getProducts = async (limite)=>{
+    readProducts = async ()=>{
         try {
             if (fs.existsSync(this.path)) {
                 const fileContent = await fs.promises.readFile(this.path, 'utf-8')
@@ -19,10 +19,20 @@ class ProductManager {
         } catch (error) {
             console.log(error)
         }
-        if (limite==0) { limite= this.products.length}
-         return this.products.slice(0,limite)
+        return this.products
     }
-    
+
+
+    getProducts = async (limite)=>{
+        const products = await this.readProducts()
+        if (Array.isArray(products)) {
+            if (limite==0) { limite= this.products.length}
+            return {status: 'ok', data: this.products.slice(0,limite)}
+        } else {
+            return {status: 'error', data: 'no se ha recibido una respuesta correcta de la base de datos.'}
+        }
+    }
+
     writeFile = async ()=>{
         const data= { index : this.productCount, productsList : this.products }
         try {
@@ -34,107 +44,106 @@ class ProductManager {
 
 
     addProduct= async (prodToAdd) =>{
+        await this.readProducts()
+
         const valid=this.validProduct(prodToAdd)
-        if (valid=="ok") {
-            await this.getProducts()
+        console.log(valid)
+        if (valid.length==0) {
             this.productCount+=1;
             let newProduct = prodToAdd
             newProduct.id =  this.productCount
             // agregar el producto
             this.products.push(newProduct)
-            // console.log(this.products)
             await  this.writeFile()
-            return "ok"
+            return {status:'ok', data:'producto id '+newProduct.id+' agregado.'}
         }
-        return valid
+        return {status: 'error', data: valid}
     }
 
-    updateProduct(id, updatedProduct){
+    updateProduct= async (id, updatedProduct)=>{
+        await this.readProducts()
         // obtengo el index del elemento.
         const prodIndex=this.products.findIndex(prod=>prod.id==id)
         if (prodIndex !== -1) {
-            delete updatedProduct.id  //Si updatedProduct trae un id, lo borro.
+            console.log(updatedProduct)
+            id in updatedProduct |  delete updatedProduct.id  //Si updatedProduct trae un id, lo borro.
             this.products[prodIndex] = { ...this.products[prodIndex], ...updatedProduct }
-            console.log("El producto "+this.products[prodIndex].code+" "+this.products[prodIndex].title+" fue actualizado exitosamente.");
-            this.writeFile()
-        } else {
-            console.log("No existe producto con id "+id);
+            await this.writeFile()
+            return {status:'ok', data:'producto id '+id+' modificado exitosamente.'}
         }
+        return {status: 'error', data:  "No existe producto con id "+id}
     }
     
     validProduct(prodToVerify) {
-        console.log(prodToVerify)
         let returnValue= true
-        let logMessage= "Se han encontrado los siguientes errores: \n"
+        const errores = []
         
         // Evaluo si el codigo existe.
+        console.log(prodToVerify.code)
         const codeExist= this.products.find(prod => prod.code ==prodToVerify.code);
+        console.log(codeExist)
+        console.log("xxx")
         if (!(codeExist===undefined)) {
            // retornar error El codigo existe
-           logMessage+= "- El codigo "+prodToVerify.code+" ya existe.\n"
+           errores.push("- El codigo "+prodToVerify.code+" ya existe.")
            returnValue=false
         }
         // evaluo si title esta vacio o undefined
         if (!prodToVerify.title) {
-            logMessage+= "- No ha especificado el titulo (title) del producto.\n"
+            errores.push("- No ha especificado el titulo (title) del producto.")
             returnValue=false
         }
         // evaluo si descripcion esta vacio o undefined
         if (!prodToVerify.description) {
-            logMessage+= "- No ha especificado la descripcion (description) del producto.\n"
+            errores.push("- No ha especificado la descripcion (description) del producto")
             returnValue=false
         }
         // evaluo si thumbnail esta vacio o undefined
         if (!prodToVerify.thumbnail) {
             // Personalemente usaria valor por defecto "Sin imagen", pero ordenes son ordenes...
-            logMessage+= "- No ha especificado el archivo de imagen (thumbnail) del producto.\n"
+            errores.push("- No ha especificado el archivo de imagen (thumbnail) del producto")
             returnValue=false
         }
         // evaluo si code esta vacio o undefined
         if (!prodToVerify.code) {
-            logMessage+= "- No ha especificado el código (code) del producto.\n"
+            errores.push("- No ha especificado el código (code) del producto")
             returnValue=false
         }
         // evaluo si price es undefined  
         if (prodToVerify.price===undefined) {
-            logMessage+= "- No ha especificado el precio (price) del producto.\n"
+            errores.push("- No ha especificado el precio (price) del producto")
             returnValue=false
         }
         // evaluo si stock esta vacio
         if (prodToVerify.stock===undefined) {
-            logMessage+= "- No ha especificado el stock del producto.\n"
+            errores.push("- No ha especificado el stock del producto")
             returnValue=false
         }
-        if (returnValue) {return "ok"}
-        return logMessage
+        
+        return errores
     }
 
     async getProductById(id) {
         // Retorna el producto buscado o undefined.
-        const products = await this.getProducts()
+        const products = await this.readProducts()
         const searchedCode = products.find(prod => prod.id ==id)
-        return searchedCode
-    }
-
-    deleteProductById(id){
-        // obtengo el index del elemento.
-        const prodIndex=this.products.findIndex(prod=>prod.id==id)
-        if (prodIndex !== -1) {
-            const deletedCode= this.products[prodIndex].code
-            const deletedTitle=this.products[prodIndex].title
-            this.products.splice(prodIndex,1)
-            // console.log(this.products)
-            console.log("El producto "+deletedCode+" "+deletedTitle+" fue eliminado exitosamente.");
-            this.writeFile()
-        } else {
-            console.log("No existe producto con id "+id);
+        if (searchedCode) {
+            return {status:'ok', data: searchedCode}
         }
+        return {status: 'error', data:  "No existe producto con id "+id}
     }
 
-    listProducts(){
-        this.products.forEach((product) => {
-            console.log(`${product.title} ... $${product.price}`);
-          });
+    async deleteProductById(id){
+        const products = await this.readProducts()
+        // obtengo el index del elemento.
+        const prodIndex=products.findIndex(prod=>prod.id==id)
+        if (prodIndex !== -1) {
+            const deletedCode= products[prodIndex].code
+            products.splice(prodIndex,1)
+            this.writeFile()     
+            return {status:'ok', data:'producto id '+id+' eliminado exitosamente.'}
+        }
+        return {status: 'error', data:  "No existe producto con id "+id}
     }
         
 }
