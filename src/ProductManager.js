@@ -7,7 +7,7 @@ class ProductManager {
         this.path = path
     }
 
-    //
+    // 
     readProducts = async ()=>{
         try {
             if (fs.existsSync(this.path)) {
@@ -23,10 +23,10 @@ class ProductManager {
     }
 
 
-    getProducts = async (limite)=>{
+    getProducts = async (limit)=>{
         const products = await this.readProducts()
         if (Array.isArray(products)) {
-            if (limite==0) { limite= this.products.length}
+            if (limit==0) { limit= this.products.length}
             return {status: 'ok', data: this.products.slice(0,limite)}
         } else {
             return {status: 'error', data: 'no se ha recibido una respuesta correcta de la base de datos.'}
@@ -125,6 +125,7 @@ class ProductManager {
         // Retorna el producto buscado o undefined.
         const products = await this.readProducts()
         const searchedCode = products.find(prod => prod.id ==id)
+        console.log(searchedCode)
         if (searchedCode) {
             return {status:'ok', data: searchedCode}
         }

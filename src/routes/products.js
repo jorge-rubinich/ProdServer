@@ -1,0 +1,44 @@
+const express = require('express')
+const ProductManager = require('../ProductManager.js')
+
+const productRouter = express.Router()
+
+const path= "./files/productos.json"
+const pm = new ProductManager(path)
+
+productRouter.get('/', async (req,res)=>{
+    let {limit } = req.query
+    if (!limit ) {limit =0}
+    const result=await pm.getProducts(limit)
+    return res.status(result.status=="ok"?200:404).send(result)
+})
+
+productRouter.get('/:pid', async (req, res)=>{
+    console.log(1)
+    const result=await pm.getProductById(req.params.pid)
+    return res.status(result.status=="ok"?200:404).send(result)
+}) 
+
+// add a new product
+productRouter.post('/', async (req, res)=>{
+    let newProduct= req.body
+    const result= await pm.addProduct(newProduct)
+    return res.status(result.status=="ok"?200:400).send(result)
+}) 
+
+// modify a product
+productRouter.put('/:pid', async (req, res)=>{
+    let idToModify= req.params.pid
+    let updatedProduct = req.body
+    const result= await pm.updateProduct(idToModify, updatedProduct)
+    return res.status(result.status=="ok"?200:404).send(result)
+}) 
+
+// delete a product
+productRouter.delete('/:pid', async (req, res)=>{
+    let idToDelete= req.params.pid
+    const result= await pm.deleteProductById(idToDelete)
+    return res.status(result.status=="ok"?200:404).send(result)
+}) 
+
+module.exports  = productRouter
