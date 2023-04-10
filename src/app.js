@@ -1,5 +1,7 @@
 const express = require('express')
 const productRouter = require("./routes/products.js")
+const cartRouter = require("./routes/carts.js")
+
 
 /* const {PORT } = dotenv.PORT
  */
@@ -12,6 +14,8 @@ app.use(express.json())  //para que pueda recibir Jsons en la peticion..OJO!!!!
 app.use(express.urlencoded({extended: true}))
 // y se reciben en req.query
 app.use('/api/products',productRouter)
+app.use('/api/carts',cartRouter)
+
 
 app.listen(PORT, ()=>{
     console.log(`Escuchando en puerto ${PORT}`)

@@ -125,6 +125,7 @@ class ProductManager {
         // Retorna el producto buscado o undefined.
         const products = await this.readProducts()
         const searchedCode = products.find(prod => prod.id ==id)
+        console.log(products)
         console.log(searchedCode)
         if (searchedCode) {
             return {status:'ok', data: searchedCode}
