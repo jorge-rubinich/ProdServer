@@ -65,7 +65,6 @@ class ProductManager {
         // obtengo el index del elemento.
         const prodIndex=this.products.findIndex(prod=>prod.id==id)
         if (prodIndex !== -1) {
-            console.log(updatedProduct)
             id in updatedProduct |  delete updatedProduct.id  //Si updatedProduct trae un id, lo borro.
             this.products[prodIndex] = { ...this.products[prodIndex], ...updatedProduct }
             await this.writeFile()
@@ -79,7 +78,6 @@ class ProductManager {
         const errores = []
         
         // Evaluo si el codigo existe.
-        console.log(prodToVerify.code)
         const codeExist= this.products.find(prod => prod.code ==prodToVerify.code);
         if (!(!codeExist)) {
            // retornar error El codigo existe
@@ -125,8 +123,6 @@ class ProductManager {
         // Retorna el producto buscado o undefined.
         const products = await this.readProducts()
         const searchedCode = products.find(prod => prod.id ==id)
-        console.log(products)
-        console.log(searchedCode)
         if (searchedCode) {
             return {status:'ok', data: searchedCode}
         }

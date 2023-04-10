@@ -4,8 +4,8 @@ const ProductManager = require('../ProductManager.js')
 
 const cartRouter = express.Router()
 
-const cartPath= "./files/carts.json"
-const productPath= "./files/productos.json"
+const productPath= process.env.PRODUCTS_PATH || "./files/productos.json"
+const cartPath= process.env.CARTS_PATH || "./files/carts.json"
 
 const cm = new CartManager(cartPath)
 
@@ -20,7 +20,6 @@ cartRouter.get('/:pid', async (req, res)=>{
 // create a new cart for the client. Return the cart id
 cartRouter.post('/', async (req, res)=>{
     const result= await cm.createCart()
-    console.log(result)
     return res.status(result.status=="ok"?200:400).send(result)
 }) 
 

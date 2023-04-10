@@ -3,8 +3,10 @@ const ProductManager = require('../ProductManager.js')
 
 const productRouter = express.Router()
 
-const path= "./files/productos.json"
-const pm = new ProductManager(path)
+const productPath= process.env.PRODUCTS_PATH || "./files/productos.json"
+
+
+const pm = new ProductManager(productPath)
 
 productRouter.get('/', async (req,res)=>{
     let {limit } = req.query
@@ -14,7 +16,6 @@ productRouter.get('/', async (req,res)=>{
 })
 
 productRouter.get('/:pid', async (req, res)=>{
-    console.log(1)
     const result=await pm.getProductById(req.params.pid)
     return res.status(result.status=="ok"?200:404).send(result)
 }) 

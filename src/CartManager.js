@@ -41,12 +41,10 @@ class CartManager {
         }
         this.carts.push(newCart)
         this.writeFile()
-        console.log('index '+this.cartCount)
         return {
             status: 'ok',
             data: this.cartCount}
     }
-
 
     addToCart= async (cartId, productId)=>{
         await this.readCarts()
@@ -74,7 +72,6 @@ class CartManager {
         // Retorna el carto buscado o undefined.
         const carts = await this.readCarts()
         const searchedCode = carts.find(cart => cart.id ==id)
-        console.log(searchedCode)
         if (searchedCode) {
             return {status:'ok', data: searchedCode.products}
         }
