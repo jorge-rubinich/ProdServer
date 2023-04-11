@@ -12,6 +12,9 @@ dotenv.config({path: envFile})
 const PORT = process.env.PORT || 4000
 const app= express()
 
+// intentando subir un archivo
+//app.post("/", uploader.single('file'))
+
 app.use(express.json())  //para que pueda recibir Jsons en la peticion..OJO!!!!
 // si vamos a usar query (url con ?) hay que agregar la prox linea
 app.use(express.urlencoded({extended: true}))
