@@ -22,7 +22,7 @@ productRouter.get('/:pid', async (req, res)=>{
 
 // add a new product
 productRouter.post('/', async (req, res)=>{
-    let newProduct= req.body
+      let newProduct= req.body
     const result= await pm.addProduct(newProduct)
     return res.status(result.status=="ok"?200:400).send(result)
 }) 

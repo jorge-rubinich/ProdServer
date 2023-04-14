@@ -27,7 +27,7 @@ class ProductManager {
         const products = await this.readProducts()
         if (Array.isArray(products)) {
             if (limit==0) { limit= this.products.length}
-            return {status: 'ok', data: this.products.slice(0,limite)}
+            return {status: 'ok', data: this.products.slice(0,limit)}
         } else {
             return {status: 'error', data: 'no se ha recibido una respuesta correcta de la base de datos.'}
         }
@@ -47,7 +47,6 @@ class ProductManager {
         await this.readProducts()
 
         const valid=this.validProduct(prodToAdd)
-        console.log(valid)
         if (valid.length==0) {
             this.productCount+=1;
             let newProduct = prodToAdd
@@ -79,7 +78,7 @@ class ProductManager {
         
         // Evaluo si el codigo existe.
         const codeExist= this.products.find(prod => prod.code ==prodToVerify.code);
-        if (!(!codeExist)) {
+        if (codeExist) {
            // retornar error El codigo existe
            errores.push("- El codigo "+prodToVerify.code+" ya existe.")
            returnValue=false
@@ -95,7 +94,7 @@ class ProductManager {
             returnValue=false
         }
         // evaluo si thumbnail esta vacio o undefined
-        if (!prodToVerify.thumbnail) {
+        if (!prodToVerify.thumbnails) {
             // Personalemente usaria valor por defecto "Sin imagen", pero ordenes son ordenes...
             errores.push("- No ha especificado el archivo de imagen (thumbnail) del producto")
             returnValue=false

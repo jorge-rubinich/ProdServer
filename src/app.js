@@ -12,6 +12,7 @@ dotenv.config({path: envFile})
 const PORT = process.env.PORT || 4000
 const app= express()
 
+app.use(express.static('./public'))
 // intentando subir un archivo
 //app.post("/", uploader.single('file'))
 
