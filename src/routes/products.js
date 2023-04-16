@@ -1,12 +1,24 @@
 const express = require('express')
 const ProductManager = require('../ProductManager.js')
-
+const {uploader} = require('../utils.js')
+const multer = require('multer');
 const productRouter = express.Router()
 
 const productPath= process.env.PRODUCTS_PATH || "./files/productos.json"
 
 
 const pm = new ProductManager(productPath)
+
+// add a new product
+productRouter.post('/', uploader.single('file'), async (req, res)=>{
+    console.log(req.body)
+    console.log(req.file)
+    let newProduct= req.body
+    
+    const result= await pm.addProduct(newProduct)
+    return res.status(result.status=="ok"?200:400).send(result)
+}) 
+
 
 productRouter.get('/', async (req,res)=>{
     let {limit } = req.query
@@ -20,12 +32,7 @@ productRouter.get('/:pid', async (req, res)=>{
     return res.status(result.status=="ok"?200:404).send(result)
 }) 
 
-// add a new product
-productRouter.post('/', async (req, res)=>{
-      let newProduct= req.body
-    const result= await pm.addProduct(newProduct)
-    return res.status(result.status=="ok"?200:400).send(result)
-}) 
+
 
 // modify a product
 productRouter.put('/:pid', async (req, res)=>{
