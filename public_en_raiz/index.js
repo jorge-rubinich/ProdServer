@@ -33,7 +33,35 @@ function sendForm() {
  .catch(error => {    console.error('Error:', error)  })
   }
   
-  // Obtener el botón del formulario
-  const botonEnviar = document.getElementById("sendButton")
-  // Asignar la función al evento "click" del botón
-  botonEnviar.addEventListener('click', sendForm)
+
+
+
+  // Obtener zona de listado
+  const plhtml = document.getElementById("prodList")
+ 
+  // obtener listado de productos
+  fetch('//localhost:5000/api/products')
+   .then(response => response.json())
+   .then(resData => {
+      if (resData.status=="ok") {
+        const products=resData.data
+        let prodList="<ul>"
+        console.log(prodList)         
+
+        products.forEach(elem => {
+          prodList=prodList+ `<li>${elem.code} ${elem.title} ${elem.price}  ${elem.stock}</li>` 
+          console.log(prodList)         
+        })
+        prodList=prodList+ "</ul>"
+        console.log(prodList)
+        plhtml.innerHTML= prodList
+
+        console.log("recibido todo ok")
+        console.log(resData.data)
+
+      }else{
+        alert(resData.data)
+      }
+   })
+   .catch(error => {    console.error('Error:', error)  })
+    

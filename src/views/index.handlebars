@@ -1,0 +1,26 @@
+<div>
+    <h1>Lista de Productos</h1>
+
+{{#if products}}
+    <table>
+        <tr> 
+            <th>Código</th>
+            <th>Producto</th>
+            <th>precio</th>
+            <th>Stock</th>
+        </tr>
+        {{#each products}}
+        <tr>
+        <td>{{this.code}}  </td> 
+        <td>{{this.title}} </td> 
+        <td>{{this.price}} </td> 
+        <td>{{this.stock}} </td> 
+        </tr>
+        {{/each}}
+    </table>
+
+
+{{else}}
+    <h1>Actualmente sin productos</h1>
+{{/if}}
+</div>

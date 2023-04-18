@@ -10,12 +10,9 @@ const productPath= process.env.PRODUCTS_PATH || "./files/productos.json"
 const pm = new ProductManager(productPath)
 
 // add a new product
-productRouter.post('/', uploader.single('file'), async (req, res)=>{
-    console.log(req.body)
-    console.log(req.file)
+productRouter.post('/', async (req, res)=>{
     let newProduct= req.body
-    
-    const result= await pm.addProduct(newProduct)
+        const result= await pm.addProduct(newProduct)
     return res.status(result.status=="ok"?200:400).send(result)
 }) 
 
@@ -31,8 +28,6 @@ productRouter.get('/:pid', async (req, res)=>{
     const result=await pm.getProductById(req.params.pid)
     return res.status(result.status=="ok"?200:404).send(result)
 }) 
-
-
 
 // modify a product
 productRouter.put('/:pid', async (req, res)=>{
