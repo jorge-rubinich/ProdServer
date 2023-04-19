@@ -18,7 +18,6 @@ const app= express()
 const httpServer= app.listen(PORT, ()=>{
     console.log(`escuchando en el puerto ${PORT}.`)
     console.log("Probame en localhost:5000 y localhost:5000/lista")
-    console.log('aun falta el agregar producto.')
 })
 
 const io = new Server(httpServer)

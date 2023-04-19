@@ -54,37 +54,37 @@ editItem= (id) => {
     editForm= `
     <h2>Formulario de productos</h2>
     <form>
-        <ul>
-            <li>
-                <label for="code">Código:</label>
-                <input id="code" name="code" required value= '${prod.code}' >
-            </li>
-            <li>
-                 <label for="title">Producto:</label>
-                 <input type="text" id="title" name="title" required value= '${prod.title}' >
-            </li>
-            <li>
-                <label for="description">Descripción:</label>
-            	<input id="description" name="description" required value= '${prod.description}' >
-            </li>
-            <li>
-                <label for="price">Precio:</label>
-                <input type="text" id="price" name="price" required value=${prod.price} >
-            </li>
-            <li>
-                <label for="category">Categoría:</label>
-                <input id="category" name="category" required value= '${prod.category}' >
-            </li>
+        <table>
+            <tr>
+                <td><label for="code">Código:</label></td>
+                <td><input id="code" name="code" required value= '${prod.code}' ></td>
+            </tr>
+            <tr>
+                 <td><label for="title">Producto:</label></td>
+                 <td><input type="text" id="title" name="title" required value= '${prod.title}' ></td>
+            </tr>
+            <tr>
+                <td><label for="description">Descripción:</label></td>
+            	<td><textarea id="description" name="description" rows="3" cols="50" required >${prod.description}</textarea></td>
+            </tr>
+            <tr>
+                <td><label for="price">Precio:</label></td>
+                <td><input type="text" id="price" name="price" required value=${prod.price} ></td>
+            </tr>
+            <tr>
+                <td><label for="category">Categoría:</label></td>
+                <td><input id="category" name="category" required value= '${prod.category}' ></td>
+            </tr>
 
-            <li>
-                <label for="stock">Stock:</label>
-                <input type="text" id="stock" name="stock" required value= ${prod.stock} >
-            </li>
-            <li>
-                <label for="thumbnail">Selecciona archivo de imagen:</label>
-                <input type="file" id="thumbnail" name="thumbnail" required value= '${prod.thumbnail}' >
-            </li>
-        </ul>
+            <tr>
+                <td><label for="stock">Stock:</label></td>
+                <td><input type="text" id="stock" name="stock" required value= ${prod.stock} ></td>
+            </tr>
+            <tr>
+                <td><label for="thumbnail">Selecciona archivo de imagen:</label></td>
+                <td><input type="file" id="thumbnail" name="thumbnail" required value= '${prod.thumbnail}' ></td>
+            </tr>
+        </table>
         <input type="button" id="botonCancelar" value="Cancelar">
         <input type="button" id="botonEnviar" value="Enviar">
     </form> `

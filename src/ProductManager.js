@@ -95,11 +95,16 @@ class ProductManager {
             returnValue=false
         }
         // evaluo si thumbnail esta vacio o undefined
-        if (!prodToVerify.thumbnail) {
-            // Personalemente usaria valor por defecto "Sin imagen", pero ordenes son ordenes...
-            errores.push("- No ha especificado el archivo de imagen (thumbnail) del producto")
-            returnValue=false
+        if (!prodToVerify.thumbnails) {
+            if (prodToVerify.thumbnail){
+                // si tengo thumbnail es que he recibido un solo archivo. Lo paso al arreglo
+                prodToVerify.thumbnails= [prodToVerify.thumbnail]
+                delete prodToVerify.thumbnail
+            } else {
+                prodToVerify.thumbnails=[]
+            }
         }
+
         // evaluo si code esta vacio o undefined
         if (!prodToVerify.code) {
             errores.push("- No ha especificado el código (code) del producto")
