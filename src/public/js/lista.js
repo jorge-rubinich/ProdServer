@@ -35,8 +35,17 @@ tableDraw = (products) =>{
 }
 
 deleteItem= (id) => {
-    alert("Aqui pedir confirmación")
-    socket.emit("deleteProduct", id)
+    
+    swal({
+        title: "Borrar Producto",
+        text: "¿Está seguro? Esta acción no se puede deshacer.",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      })
+      .then((willDelete) => {
+        if (willDelete) { socket.emit("deleteProduct", id) }
+      })
 }
 
 editItem= (id) => {
